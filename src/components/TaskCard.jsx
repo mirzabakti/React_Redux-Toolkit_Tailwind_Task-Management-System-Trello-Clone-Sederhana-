@@ -1,9 +1,24 @@
 import { useDispatch } from "react-redux";
 import { deleteTask } from "../features/tasks/tasksSlice";
 
+// Tentukan warna berdasarkan prioritas
+const getPriorityColor = (priority) => {
+  switch (priority) {
+    case 'High':
+      return 'bg-red-200';
+    case 'Medium':
+      return 'bg-yellow-200';
+    case 'Low':
+      return 'bg-green-200';
+    default:
+      return 'bg-gray-100';
+  }
+};
+
 // Komponen TaskCard untuk menampilkan setiap task
 const TaskCard = ({ task, onEdit }) => {
   const dispatch = useDispatch();
+  const priorityColor = getPriorityColor(task.priority); // Dapatkan warna berdasarkan prioritas
 
   // Fungsi untuk menghapus task
   const handleDelete = () => {
@@ -11,7 +26,7 @@ const TaskCard = ({ task, onEdit }) => {
   };
 
   return (
-    <div className="p-4 bg-gray-100 rounded-lg shadow-md mb-4">
+    <div className={`p-4 ${priorityColor} rounded-lg shadow-md mb-4`}>
       <h3 className="text-lg font-bold">{task.title}</h3>
       <p className="text-sm text-gray-700">{task.description}</p>
       <p className="text-xs text-gray-500 mt-2">Priority: {task.priority}</p>
