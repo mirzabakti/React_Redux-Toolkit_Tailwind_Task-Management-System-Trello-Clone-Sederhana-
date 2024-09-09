@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { addTask } from '../features/tasks/tasksSlice';
+import { addTask, editTask } from '../features/tasks/tasksSlice';
 
-const TaskForm = () => {
+const TaskForm = ({ taskToEdit, clearEdit }) => {
   const [title, setTitle] = useState(''); // State untuk title
   const [description, setDescription] = useState(''); // State untuk description
   const [priority, setPriority] = useState('Low'); // State untuk priority
@@ -10,16 +10,26 @@ const TaskForm = () => {
 
   const dispatch = useDispatch(); // Gunakan dispatch untuk mengirim action
 
+  useEffect(() => {
+    if (taskToEdit) {
+      setTitle(taskToEdit.title);
+      setDescription(taskToEdit.description);
+      setPriority(taskToEdit.priority);
+      setStatus(taskToEdit.status);
+    } 
+  }, [taskToEdit]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newTask = {
-      id: Date.now(), // ID unik untuk task baru
-      title,
-      description,
-      priority,
-      status,
-    };
-    dispatch(addTask(newTask)); // Dispatch action addTask
+    
+    // Jika ada taskToEdit, maka edit task, jika tidak, tambahkan task baru
+    if (taskToEdit) {
+      dispatch(editTask({ id: taskToEdit.id, title, description, priority, status }));
+      clearEdit(); // Bersihkan mode edit setelah task disimpan
+    } else {
+      dispatch(addTask({ id: Date.now(), title, description, priority, status }));
+    }
+    
     setTitle(''); // Reset form setelah submit
     setDescription('');
     setPriority('Low');
@@ -69,7 +79,7 @@ const TaskForm = () => {
         </select>
       </div>
       {/* Button untuk submit form */}
-      <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">Add Task</button>
+      <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">{taskToEdit ? 'Update Task' : 'Add Task'}</button>
     </form>
   );
 };
