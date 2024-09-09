@@ -1,22 +1,23 @@
 import { useDispatch } from "react-redux";
 import { deleteTask } from "../features/tasks/tasksSlice";
+import { Draggable } from "react-beautiful-dnd";
 
 // Tentukan warna berdasarkan prioritas
 const getPriorityColor = (priority) => {
   switch (priority) {
-    case 'High':
-      return 'bg-red-200';
-    case 'Medium':
-      return 'bg-yellow-200';
-    case 'Low':
-      return 'bg-green-200';
+    case "High":
+      return "bg-red-200";
+    case "Medium":
+      return "bg-yellow-200";
+    case "Low":
+      return "bg-green-200";
     default:
-      return 'bg-gray-100';
+      return "bg-gray-100";
   }
 };
 
 // Komponen TaskCard untuk menampilkan setiap task
-const TaskCard = ({ task, onEdit }) => {
+const TaskCard = ({ task, onEdit, index }) => {
   const dispatch = useDispatch();
   const priorityColor = getPriorityColor(task.priority); // Dapatkan warna berdasarkan prioritas
 
@@ -26,21 +27,25 @@ const TaskCard = ({ task, onEdit }) => {
   };
 
   return (
-    <div className={`p-4 ${priorityColor} rounded-lg shadow-md mb-4`}>
-      <h3 className="text-lg font-bold">{task.title}</h3>
-      <p className="text-sm text-gray-700">{task.description}</p>
-      <p className="text-xs text-gray-500 mt-2">Priority: {task.priority}</p>
-      <div className="mt-2 space-x-4">
-        {/* Tombol untuk menghapus task */}
-        <button onClick={handleDelete} className=" text-red-500 text-sm">
-          Delete
-        </button>
-        {/* Tombol untuk mengedit task */}
-        <button onClick={() => onEdit(task)} className=" text-blue-500 text-sm">
-          Edit
-        </button>
-      </div>
-    </div>
+    <Draggable draggableId={task.id.toString()} index={index}>
+      {(provided) => (
+        <div className={`p-4 ${priorityColor} rounded-lg shadow-md mb-4`} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+          <h3 className="text-lg font-bold">{task.title}</h3>
+          <p className="text-sm text-gray-700">{task.description}</p>
+          <p className="text-xs text-gray-500 mt-2">Priority: {task.priority}</p>
+          <div className="mt-2 space-x-4">
+            {/* Tombol untuk menghapus task */}
+            <button onClick={handleDelete} className=" text-red-500 text-sm">
+              Delete
+            </button>
+            {/* Tombol untuk mengedit task */}
+            <button onClick={() => onEdit(task)} className=" text-blue-500 text-sm">
+              Edit
+            </button>
+          </div>
+        </div>
+      )}
+    </Draggable>
   );
 };
 
