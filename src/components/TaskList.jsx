@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import TaskCard from './TaskCard';
 
 // Komponen TaskList untuk menampilkan daftar task berdasarkan status (To-Do, In Progress, Done)
-const TaskList = ({ status }) => {
+const TaskList = ({ status, onEdit }) => {
   // Ambil semua task dari state global Redux
   const tasks = useSelector((state) => state.tasks.tasks);
 
@@ -17,7 +17,7 @@ const TaskList = ({ status }) => {
         <p className="text-sm text-gray-600">No tasks in {status}</p>
       ) : (
         // Tampilkan setiap task menggunakan TaskCard
-        filteredTasks.map(task => <TaskCard key={task.id} task={task} />)
+        filteredTasks.map(task => <TaskCard key={task.id} task={task} onEdit={onEdit} />)
       )}
     </div>
   );
